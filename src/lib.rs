@@ -457,7 +457,7 @@ impl<'a> Tokenizer<'a> {
                 }
             }
             State::AfterDeclaration => {
-                if s.starts_with(b"<!DOCTYPE") {
+                if s.starts_with(b"<!DOCTYPE") || s.starts_with(b"<!doctype") {
                     let t = Self::parse_doctype(s);
                     match t {
                         Ok(Token::DtdStart { .. }) => self.state = State::Dtd,

@@ -64,6 +64,12 @@ test!(
 );
 
 test!(
+    dtd_10,
+    "<!doctype html>",
+    Token::EmptyDtd("html", None, 0..15)
+);
+
+test!(
     dtd_entity_01,
     "<!DOCTYPE svg [
     <!ENTITY ns_extend \"http://ns.adobe.com/Extensibility/1.0/\">
