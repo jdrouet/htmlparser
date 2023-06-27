@@ -1,6 +1,6 @@
 [package]
 name = "htmlparser"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Jeremie Drouet <jeremie.drouet@gmail.com>"]
 categories = ["parser-implementations"]
 description = "Pull-based, zero-allocation HTML parser."
