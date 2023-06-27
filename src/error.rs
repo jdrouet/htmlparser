@@ -1,5 +1,4 @@
-use core::fmt;
-use core::str;
+use core::{fmt, str};
 #[cfg(feature = "std")]
 use std::error;
 
@@ -169,7 +168,7 @@ impl fmt::Display for StreamError {
                     expected as char, actual as char, pos
                 )
             }
-            StreamError::InvalidCharMultiple(actual, ref expected, pos) => {
+            StreamError::InvalidCharMultiple(actual, expected, pos) => {
                 let mut expected_iter = expected.iter().peekable();
 
                 write!(f, "expected ")?;
