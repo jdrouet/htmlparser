@@ -1,10 +1,14 @@
 name: build
 
-on: [push]
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
 
-env:
-  CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-Dwarnings"
+concurrency:
+  group: $-$
+  cancel-in-progress: true
 
 jobs:
   code-checking:
@@ -14,37 +18,32 @@ jobs:
         rust:
           - 1.31.0
           - stable
-    concurrency: 
-      group: ${{ github.ref }}-code-checking-${{ matrix.rust }}
-      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.rust }}
-          profile: minimal
-          components: rustfmt,clippy
-
       - uses: taiki-e/install-action@cargo-hack
-          
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-code-checking-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: run lint
-        run: cargo fmt --check
-
       - name: run check on features
-        run: cargo hack check --feature-powerset
+        run: cargo hack check --feature-powerset --tests
 
-      - name: run clippy
-        run: cargo clippy --all-targets --all-features --tests
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - run: cargo clippy --all-features --all-targets -- -D warnings
+
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --check --all
 
   testing:
     runs-on: ubuntu-latest
@@ -54,11 +53,13 @@ jobs:
           - 1.31.0
           - stable
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust }}
 
-    - name: Run tests
-      run: cargo test
+      - run: cargo test --all-targets
+        if: matrix.rust == 'stable'
 
-    - name: Run tests without default features
-      run: cargo test --no-default-features
+      - run: cargo test --doc
+        if: matrix.rust == 'stable'

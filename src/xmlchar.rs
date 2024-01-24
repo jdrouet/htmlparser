@@ -18,10 +18,14 @@ impl XmlCharExt for char {
     fn is_xml_name_start(&self) -> bool {
         // Check for ASCII first.
         if *self as u32 <= 128 {
-            return matches!(*self as u8, b'A'...b'Z' | b'a'...b'z' | b':' | b'_');
+            return match *self as u8 {
+                b'A'...b'Z' | b'a'...b'z' | b':' | b'_' => true,
+                _ => false,
+            };
         }
 
-        matches!(*self as u32, 0x0000C0...0x0000D6
+        match *self as u32 {
+            0x0000C0...0x0000D6
             | 0x0000D8...0x0000F6
             | 0x0000F8...0x0002FF
             | 0x000370...0x00037D
@@ -32,17 +36,21 @@ impl XmlCharExt for char {
             | 0x003001...0x00D7FF
             | 0x00F900...0x00FDCF
             | 0x00FDF0...0x00FFFD
-            | 0x010000...0x0EFFFF)
+            | 0x010000...0x0EFFFF => true,
+            _ => false,
+        }
     }
 
     #[inline]
+    #[allow(clippy::match_like_matches_macro)]
     fn is_xml_name(&self) -> bool {
         // Check for ASCII first.
         if *self as u32 <= 128 {
             return (*self as u8).is_xml_name();
         }
 
-        matches!(*self as u32, 0x0000B7
+        match *self as u32 {
+            0x0000B7
             | 0x0000C0...0x0000D6
             | 0x0000D8...0x0000F6
             | 0x0000F8...0x0002FF
@@ -56,7 +64,9 @@ impl XmlCharExt for char {
             | 0x003001...0x00D7FF
             | 0x00F900...0x00FDCF
             | 0x00FDF0...0x00FFFD
-            | 0x010000...0x0EFFFF)
+            | 0x010000...0x0EFFFF => true,
+            _ => false,
+        }
     }
 
     #[inline]
@@ -66,10 +76,7 @@ impl XmlCharExt for char {
         if (*self as u32) < 0x20 {
             return (*self as u8).is_xml_space();
         }
-        match *self as u32 {
-            0xFFFF | 0xFFFE => false,
-            _ => true,
-        }
+        !matches!(*self as u32, 0xFFFF | 0xFFFE)
     }
 }
 

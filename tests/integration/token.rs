@@ -56,6 +56,12 @@ macro_rules! test {
 #[inline(never)]
 pub fn to_test_token(token: Result<html::Token, html::Error>) -> Token {
     match token {
+        Ok(html::Token::ConditionalCommentStart { condition, span }) => {
+            Token::ConditionalCommentStart(condition.as_str(), span.range())
+        }
+        Ok(html::Token::ConditionalCommentEnd { span }) => {
+            Token::ConditionalCommentEnd(span.range())
+        }
         Ok(html::Token::Declaration {
             version,
             encoding,
@@ -72,12 +78,6 @@ pub fn to_test_token(token: Result<html::Token, html::Error>) -> Token {
             content,
             span,
         }) => Token::PI(target.as_str(), content.map(|v| v.as_str()), span.range()),
-        Ok(html::Token::ConditionalCommentStart { condition, span }) => {
-            Token::ConditionalCommentStart(condition.as_str(), span.range())
-        }
-        Ok(html::Token::ConditionalCommentEnd { span }) => {
-            Token::ConditionalCommentEnd(span.range())
-        }
         Ok(html::Token::Comment { text, span }) => Token::Comment(text.as_str(), span.range()),
         Ok(html::Token::DtdStart {
             name,
@@ -85,7 +85,7 @@ pub fn to_test_token(token: Result<html::Token, html::Error>) -> Token {
             span,
         }) => Token::DtdStart(
             name.as_str(),
-            external_id.map(to_test_external_id),
+            external_id.map(|v| to_test_external_id(v)),
             span.range(),
         ),
         Ok(html::Token::EmptyDtd {
@@ -94,7 +94,7 @@ pub fn to_test_token(token: Result<html::Token, html::Error>) -> Token {
             span,
         }) => Token::EmptyDtd(
             name.as_str(),
-            external_id.map(to_test_external_id),
+            external_id.map(|v| to_test_external_id(v)),
             span.range(),
         ),
         Ok(html::Token::EntityDeclaration {
