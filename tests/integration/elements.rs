@@ -249,6 +249,14 @@ test!(
 );
 
 test!(
+    attribute_08,
+    "<a href=\"<%asm_group_unsubscribe_raw_url%>\" />",
+    Token::ElementStart("", "a", 0..2),
+    Token::Attribute("", "href", "<%asm_group_unsubscribe_raw_url%>", 3..43),
+    Token::ElementEnd(ElementEnd::Empty, 44..46)
+);
+
+test!(
     attribute_err_01,
     "<c az=test>",
     Token::ElementStart("", "c", 0..2),
@@ -275,13 +283,6 @@ test!(
     Token::ElementStart("", "c", 0..2),
     Token::Attribute("", "a", "b", 3..8),
     Token::Error("invalid attribute at 1:9 cause expected '=' not '/' at 1:11".to_string())
-);
-
-test!(
-    attribute_err_05,
-    "<c a='<'/>",
-    Token::ElementStart("", "c", 0..2),
-    Token::Error("invalid attribute at 1:3 cause expected ''' not '<' at 1:7".to_string())
 );
 
 test!(

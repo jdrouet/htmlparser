@@ -1167,8 +1167,7 @@ impl<'a> Tokenizer<'a> {
         s.consume_eq()?;
         let quote = s.consume_quote()?;
         let quote_c = quote as char;
-        // The attribute value must not contain the < character.
-        let value = s.consume_chars(|_, c| c != quote_c && c != '<')?;
+        let value = s.consume_chars(|_, c| c != quote_c)?;
         s.consume_byte(quote)?;
         let span = s.slice_back(start);
 
