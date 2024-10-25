@@ -26,6 +26,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.3](https://github.com/jdrouet/htmlparser/compare/v0.1.2...v0.1.3) - 2024-10-25
+
+### Fixed
+
+- should allow having chevron in attribute
+
+### Other
+
+- create workflow to validate pr title
+
 ## [0.13.5] - 2022-10-18
 ### Fixed
 - Do no use recursive calls during parsing. Could lead to stack overflow on some input.
