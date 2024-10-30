@@ -57,6 +57,14 @@ test!(
     Token::ElementEnd(ElementEnd::Empty, 8..10)
 );
 
+
+test!(
+    element_09,
+    "<div hidden=\"true\"",
+    Token::ElementStart("", "div", 0..4),
+    Token::Attribute("", "hidden", "true", 5..18)
+);
+
 test!(
     element_err_01,
     "<>",
@@ -267,14 +275,16 @@ test!(
     attribute_err_02,
     "<c a>",
     Token::ElementStart("", "c", 0..2),
-    Token::Error("invalid attribute at 1:3 cause expected \'=\' not \'>\' at 1:5".to_string())
+    Token::Attribute("", "a", "true", 3..4),
+    Token::ElementEnd(ElementEnd::Open, 4..5)
 );
 
 test!(
     attribute_err_03,
     "<c a/>",
     Token::ElementStart("", "c", 0..2),
-    Token::Error("invalid attribute at 1:3 cause expected '=' not '/' at 1:5".to_string())
+    Token::Attribute("", "a", "true", 3..4),
+    Token::ElementEnd(ElementEnd::Empty, 4..6)
 );
 
 test!(
@@ -282,7 +292,8 @@ test!(
     "<c a='b' q/>",
     Token::ElementStart("", "c", 0..2),
     Token::Attribute("", "a", "b", 3..8),
-    Token::Error("invalid attribute at 1:9 cause expected '=' not '/' at 1:11".to_string())
+    Token::Attribute("", "q", "true", 9..10),
+    Token::ElementEnd(ElementEnd::Empty, 10..12)
 );
 
 test!(

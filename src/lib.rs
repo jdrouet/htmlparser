@@ -1119,7 +1119,8 @@ impl<'a> Tokenizer<'a> {
         })
     }
 
-    // Name Eq AttValue
+    // Name Eq AttValue, or
+    // Name (infered as Name Eq "true")
     fn parse_attribute(s: &mut Stream<'a>) -> StreamResult<Token<'a>> {
         let attr_start = s.pos();
         let has_space = s.starts_with_space();
@@ -1164,11 +1165,20 @@ impl<'a> Tokenizer<'a> {
         let start = s.pos();
 
         let (prefix, local) = s.consume_qname()?;
-        s.consume_eq()?;
-        let quote = s.consume_quote()?;
-        let quote_c = quote as char;
-        let value = s.consume_chars(|_, c| c != quote_c)?;
-        s.consume_byte(quote)?;
+
+        s.skip_spaces();
+
+        let value = match s.curr_byte() {
+            Ok(b'=') => {
+                s.consume_eq()?;
+                let quote = s.consume_quote()?;
+                let quote_c = quote as char;
+                let value = s.consume_chars(|_, c| c != quote_c)?;
+                s.consume_byte(quote)?;
+                value
+            },
+            _ => "true".into(),
+        };
         let span = s.slice_back(start);
 
         Ok(Token::Attribute {
