@@ -36,7 +36,7 @@ test!(
     element_06,
     "<俄语 լեզու=\"ռուսերեն\">данные</俄语>",
     Token::ElementStart("", "俄语", 0..7),
-    Token::Attribute("", "լեզու", "ռուսերեն", 8..37),
+    Token::Attribute("", "լեզու", Some("ռուսերեն"), 8..37),
     Token::ElementEnd(ElementEnd::Open, 37..38),
     Token::Text("данные", 38..50),
     Token::ElementEnd(ElementEnd::Close("", "俄语"), 50..59)
@@ -57,12 +57,11 @@ test!(
     Token::ElementEnd(ElementEnd::Empty, 8..10)
 );
 
-
 test!(
     element_09,
     "<div hidden=\"true\"",
     Token::ElementStart("", "div", 0..4),
-    Token::Attribute("", "hidden", "true", 5..18)
+    Token::Attribute("", "hidden", Some("true"), 5..18)
 );
 
 test!(
@@ -87,7 +86,7 @@ test!(
     element_err_04,
     "<a x='test' /",
     Token::ElementStart("", "a", 0..2),
-    Token::Attribute("", "x", "test", 3..11),
+    Token::Attribute("", "x", Some("test"), 3..11),
     Token::Error("invalid attribute at 1:12 cause unexpected end of stream".to_string())
 );
 
@@ -201,7 +200,7 @@ test!(
     attribute_01,
     "<a ax=\"test\"/>",
     Token::ElementStart("", "a", 0..2),
-    Token::Attribute("", "ax", "test", 3..12),
+    Token::Attribute("", "ax", Some("test"), 3..12),
     Token::ElementEnd(ElementEnd::Empty, 12..14)
 );
 
@@ -209,7 +208,7 @@ test!(
     attribute_02,
     "<a ax='test'/>",
     Token::ElementStart("", "a", 0..2),
-    Token::Attribute("", "ax", "test", 3..12),
+    Token::Attribute("", "ax", Some("test"), 3..12),
     Token::ElementEnd(ElementEnd::Empty, 12..14)
 );
 
@@ -217,8 +216,8 @@ test!(
     attribute_03,
     "<a b='test1' c=\"test2\"/>",
     Token::ElementStart("", "a", 0..2),
-    Token::Attribute("", "b", "test1", 3..12),
-    Token::Attribute("", "c", "test2", 13..22),
+    Token::Attribute("", "b", Some("test1"), 3..12),
+    Token::Attribute("", "c", Some("test2"), 13..22),
     Token::ElementEnd(ElementEnd::Empty, 22..24)
 );
 
@@ -226,8 +225,8 @@ test!(
     attribute_04,
     "<a b='\"test1\"' c=\"'test2'\"/>",
     Token::ElementStart("", "a", 0..2),
-    Token::Attribute("", "b", "\"test1\"", 3..14),
-    Token::Attribute("", "c", "'test2'", 15..26),
+    Token::Attribute("", "b", Some("\"test1\""), 3..14),
+    Token::Attribute("", "c", Some("'test2'"), 15..26),
     Token::ElementEnd(ElementEnd::Empty, 26..28)
 );
 
@@ -235,8 +234,8 @@ test!(
     attribute_05,
     "<c a=\"test1' c='test2\" b='test1\" c=\"test2'/>",
     Token::ElementStart("", "c", 0..2),
-    Token::Attribute("", "a", "test1' c='test2", 3..22),
-    Token::Attribute("", "b", "test1\" c=\"test2", 23..42),
+    Token::Attribute("", "a", Some("test1' c='test2"), 3..22),
+    Token::Attribute("", "b", Some("test1\" c=\"test2"), 23..42),
     Token::ElementEnd(ElementEnd::Empty, 42..44)
 );
 
@@ -244,7 +243,7 @@ test!(
     attribute_06,
     "<c   a   =    'test1'     />",
     Token::ElementStart("", "c", 0..2),
-    Token::Attribute("", "a", "test1", 5..21),
+    Token::Attribute("", "a", Some("test1"), 5..21),
     Token::ElementEnd(ElementEnd::Empty, 26..28)
 );
 
@@ -252,7 +251,7 @@ test!(
     attribute_07,
     "<c q:a='b'/>",
     Token::ElementStart("", "c", 0..2),
-    Token::Attribute("q", "a", "b", 3..10),
+    Token::Attribute("q", "a", Some("b"), 3..10),
     Token::ElementEnd(ElementEnd::Empty, 10..12)
 );
 
@@ -260,7 +259,7 @@ test!(
     attribute_08,
     "<a href=\"<%asm_group_unsubscribe_raw_url%>\" />",
     Token::ElementStart("", "a", 0..2),
-    Token::Attribute("", "href", "<%asm_group_unsubscribe_raw_url%>", 3..43),
+    Token::Attribute("", "href", Some("<%asm_group_unsubscribe_raw_url%>"), 3..43),
     Token::ElementEnd(ElementEnd::Empty, 44..46)
 );
 
@@ -275,7 +274,7 @@ test!(
     attribute_err_02,
     "<c a>",
     Token::ElementStart("", "c", 0..2),
-    Token::Attribute("", "a", "true", 3..4),
+    Token::Attribute("", "a", None, 3..4),
     Token::ElementEnd(ElementEnd::Open, 4..5)
 );
 
@@ -283,7 +282,7 @@ test!(
     attribute_err_03,
     "<c a/>",
     Token::ElementStart("", "c", 0..2),
-    Token::Attribute("", "a", "true", 3..4),
+    Token::Attribute("", "a", None, 3..4),
     Token::ElementEnd(ElementEnd::Empty, 4..6)
 );
 
@@ -291,8 +290,8 @@ test!(
     attribute_err_04,
     "<c a='b' q/>",
     Token::ElementStart("", "c", 0..2),
-    Token::Attribute("", "a", "b", 3..8),
-    Token::Attribute("", "q", "true", 9..10),
+    Token::Attribute("", "a", Some("b"), 3..8),
+    Token::Attribute("", "q", None, 9..10),
     Token::ElementEnd(ElementEnd::Empty, 10..12)
 );
 
@@ -309,6 +308,6 @@ test!(
     attribute_err_07,
     "<c a='v'b='v'/>",
     Token::ElementStart("", "c", 0..2),
-    Token::Attribute("", "a", "v", 3..8),
+    Token::Attribute("", "a", Some("v"), 3..8),
     Token::Error("invalid attribute at 1:9 cause expected space not 'b' at 1:9".to_string())
 );

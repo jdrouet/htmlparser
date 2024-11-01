@@ -12,7 +12,7 @@ pub enum Token<'a> {
     EntityDecl(&'a str, EntityDefinition<'a>, Range),
     DtdEnd(Range),
     ElementStart(&'a str, &'a str, Range),
-    Attribute(&'a str, &'a str, &'a str, Range),
+    Attribute(&'a str, &'a str, Option<&'a str>, Range),
     ElementEnd(ElementEnd<'a>, Range),
     Text(&'a str, Range),
     Cdata(&'a str, Range),
@@ -127,7 +127,7 @@ pub fn to_test_token(token: Result<html::Token, html::Error>) -> Token {
         }) => Token::Attribute(
             prefix.as_str(),
             local.as_str(),
-            value.as_str(),
+            value.map(|x| x.as_str()),
             span.range(),
         ),
         Ok(html::Token::ElementEnd { end, span }) => Token::ElementEnd(

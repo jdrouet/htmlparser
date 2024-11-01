@@ -285,7 +285,7 @@ pub enum Token<'a> {
     Attribute {
         prefix: StrSpan<'a>,
         local: StrSpan<'a>,
-        value: StrSpan<'a>,
+        value: Option<StrSpan<'a>>,
         span: StrSpan<'a>,
     },
 
@@ -1175,9 +1175,9 @@ impl<'a> Tokenizer<'a> {
                 let quote_c = quote as char;
                 let value = s.consume_chars(|_, c| c != quote_c)?;
                 s.consume_byte(quote)?;
-                value
+                Some(value)
             },
-            _ => "true".into(),
+            _ => None,
         };
         let span = s.slice_back(start);
 
