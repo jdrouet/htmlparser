@@ -548,6 +548,18 @@ impl<'a> Stream<'a> {
         Ok(())
     }
 
+    /// Tries to consume the next `=`.
+    ///
+    /// Unlike `consume_eq()` will not return any errors.
+    pub fn try_consume_eq(&mut self) -> bool {
+        self.skip_spaces();
+        let found = self.try_consume_byte(b'=');
+        if found {
+            self.skip_spaces();
+        }
+        found
+    }
+
     /// Consumes quote.
     ///
     /// Consumes `'` or `"` and returns it.
