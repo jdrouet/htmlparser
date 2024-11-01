@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/jdrouet/htmlparser/compare/v0.1.3...v0.1.4) - 2024-11-01
+
+### Added
+
+- support attributes with no value ([#4](https://github.com/jdrouet/htmlparser/pull/4))
+
 ## [0.1.3](https://github.com/jdrouet/htmlparser/compare/v0.1.2...v0.1.3) - 2024-10-25
 
 ### Fixed
