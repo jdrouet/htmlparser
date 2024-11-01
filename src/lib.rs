@@ -1166,18 +1166,14 @@ impl<'a> Tokenizer<'a> {
 
         let (prefix, local) = s.consume_qname()?;
 
-        s.skip_spaces();
-
-        let value = match s.curr_byte() {
-            Ok(b'=') => {
-                s.consume_eq()?;
-                let quote = s.consume_quote()?;
-                let quote_c = quote as char;
-                let value = s.consume_chars(|_, c| c != quote_c)?;
-                s.consume_byte(quote)?;
-                Some(value)
-            },
-            _ => None,
+        let value = if s.try_consume_eq() {
+            let quote = s.consume_quote()?;
+            let quote_c = quote as char;
+            let value = s.consume_chars(|_, c| c != quote_c)?;
+            s.consume_byte(quote)?;
+            Some(value)
+        } else {
+            None
         };
         let span = s.slice_back(start);
 
