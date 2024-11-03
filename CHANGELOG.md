@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/jdrouet/htmlparser/compare/v0.2.0...v0.2.1) - 2024-11-03
+
+### Fixed
+
+- rewind space when attribute has no value ([#6](https://github.com/jdrouet/htmlparser/pull/6))
+
 ## [0.2.0](https://github.com/jdrouet/htmlparser/compare/v0.1.3...v0.2.0) - 2024-11-01
 
 ### Added
