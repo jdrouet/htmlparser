@@ -552,12 +552,18 @@ impl<'a> Stream<'a> {
     ///
     /// Unlike `consume_eq()` will not return any errors.
     pub fn try_consume_eq(&mut self) -> bool {
-        self.skip_spaces();
-        let found = self.try_consume_byte(b'=');
+        let start = self.pos();
+
+        let mut s = *self;
+        s.skip_spaces();
+        let found = s.try_consume_byte(b'=');
         if found {
-            self.skip_spaces();
+            s.skip_spaces();
+            self.advance(s.pos() - start);
+            true
+        } else {
+            false
         }
-        found
     }
 
     /// Consumes quote.

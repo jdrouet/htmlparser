@@ -264,14 +264,7 @@ test!(
 );
 
 test!(
-    attribute_err_01,
-    "<c az=test>",
-    Token::ElementStart("", "c", 0..2),
-    Token::Error("invalid attribute at 1:3 cause expected quote mark not 't' at 1:7".to_string())
-);
-
-test!(
-    attribute_err_02,
+    attribute_09,
     "<c a>",
     Token::ElementStart("", "c", 0..2),
     Token::Attribute("", "a", None, 3..4),
@@ -279,11 +272,28 @@ test!(
 );
 
 test!(
-    attribute_err_03,
+    attribute_10,
     "<c a/>",
     Token::ElementStart("", "c", 0..2),
     Token::Attribute("", "a", None, 3..4),
     Token::ElementEnd(ElementEnd::Empty, 4..6)
+);
+
+test!(
+    attribute_11,
+    "<c a b c>",
+    Token::ElementStart("", "c", 0..2),
+    Token::Attribute("", "a", None, 3..4),
+    Token::Attribute("", "b", None, 5..6),
+    Token::Attribute("", "c", None, 7..8),
+    Token::ElementEnd(ElementEnd::Open, 8..9)
+);
+
+test!(
+    attribute_err_01,
+    "<c az=test>",
+    Token::ElementStart("", "c", 0..2),
+    Token::Error("invalid attribute at 1:3 cause expected quote mark not 't' at 1:7".to_string())
 );
 
 test!(
